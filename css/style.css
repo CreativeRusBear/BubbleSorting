@@ -28,7 +28,7 @@ p {
 p span {
   position: relative;
   display: block;
-  font-size: 23px;
+  font-size: 21px;
   line-height: 20px;
   padding: 12px 20px;
   margin-bottom: 24px;
@@ -323,7 +323,7 @@ input::-webkit-inner-spin-button{
 }
 /*стилизация контейнера, в котором находятся элементы для работы с вводом и отправкой введенных данных*/
 .data_input {
-  margin: 50px auto;
+  margin: 55px auto;
   display: flex;
   justify-content: center;
   align-items: center;
