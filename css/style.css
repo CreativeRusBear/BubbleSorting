@@ -1,0 +1,732 @@
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Lusitana);
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  outline: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: "Lusitana", sans-serif;
+  background: #f1f1f1;
+}
+
+p {
+  font-size: 20px;
+  line-height: 28px;
+  margin: 0 0 18px;
+}
+
+p span {
+  position: relative;
+  display: block;
+  font-size: 23px;
+  line-height: 20px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 4px;
+  text-align: center;
+}
+
+/*Используется для отображения желаемого контента до содержимого элемента, к которому он добавляется.
+В данном случае отвечает за отображение синего круга слева от текста "Инструкция"*/
+p span:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  margin: auto;
+  background-color: #76cff4;
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 2px;
+}
+
+/*Используется для вывода желаемого контента после содержимого элемента, к которому он добавляется
+ В данном случае отвечает за отображение белого перевернутого треугольника, который находится внутри синего круга*/
+p span:after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 0;
+  left: -6px;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 8px 6px;
+  border-color: transparent transparent white transparent;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+
+/*скрытие текста с инструкцией*/
+.text{
+  display: none;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: normal;
+  line-height: 44px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  cursor: pointer;
+  padding: 6px 20px;
+  font-size: 48px;
+}
+
+/*стили для button (гамбургера, белого крестика)*/
+.menu-toggle {
+  opacity: 0.6;
+  background-color: transparent;
+  position: fixed;
+  z-index: 2;
+  top: 24px;
+  left: 24px;
+  border: none;
+  width: 36px;
+  height: 30px;
+  outline: none;
+  transition: opacity 0.2s ease-out;
+  cursor: pointer;
+}
+
+/*отображение "габмургера"*/
+.menu-toggle:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  right: auto;
+  width: 100%;
+  background: linear-gradient(to bottom, #76cff4, #76cff4 20%, transparent 20%, transparent 40%, #76cff4 40%, #76cff4 60%, transparent 60%, transparent 80%, #76cff4 80%, #76cff4 100%);
+  transition: opacity 0.2s ease-out, width 0.2s 0.2s ease-out;
+}
+
+/*отображение белого крестика*/
+.menu-toggle:after {
+  opacity: 0;
+  content: '×';
+  color: white;
+  position: absolute;
+  top: 16px;
+  left: -4px;
+  font-family: Arial, sans-serif;
+  font-size: 76px;
+  line-height: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+.menu-toggle:active {
+  transform: translateY(2px);
+}
+
+/*hover-эффект для кнопки. При наведении кнопка становится непрозрачной*/
+.menu-toggle:hover {
+  opacity: 1;
+}
+
+/*класс "open" добавляется/удаляется при нажатии на button.
+Соответсвенно, стили для этого класса также добавляются или удаляются*/
+
+/*делает полностью непрозрачный белый крестик*/
+.open .menu-toggle {
+  opacity: 1;
+}
+
+/*Скрытие "гамбургера"*/
+.open .menu-toggle:before {
+  opacity: 0;
+  width: 0;
+}
+
+/*появление и анимация  белого крестика*/
+.open .menu-toggle:after {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) rotate(360deg);
+  transition: transform 0.4s 1s ease-out, opacity 0.4s 1s ease-out;
+}
+
+/*появление и скрытие, а также анимация для меню при нажатии на .menu-toggle*/
+nav {
+  z-index: 1;
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+nav:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  background: rgba(118, 207, 244, 0.9);
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  border-radius: 100%;
+  overflow: hidden;
+}
+.open nav {
+  top: 0;
+}
+
+/*анимация "menu-animation", которая начинает свою работу при нажатии нажатии на кнопку.
+Ориентирована на масштабирование, прозрачность, сдвиги (x,y),а также на изменение формы , появлющегося круга (ориентирована на анимацию для меню)*/
+.open nav:before {
+  animation: menu-animation 0.8s ease-out forwards;
+}
+
+/*отвечает за позиционирование текста у главного меню*/
+ul.menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  backface-visibility: hidden;
+  color: white;
+}
+
+/*стилизация для элементов li*/
+ul.menu li {
+  opacity: 0;
+  text-align: center;
+  transform: translate3d(0, 36px, 0);
+}
+
+/*анимация для элемента li при наведении*/
+ul.menu li:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  left: auto;
+  background-color: white;
+  height: 100%;
+  width: 0;
+  overflow: hidden;
+  transition: width 0.14s ease-out;
+}
+ul.menu li:after {
+  opacity: 0;
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  color: #76cff4;
+  overflow: hidden;
+  transform: translate(-24px, 6px);
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+/*hover-эффекты для элементов li*/
+ul.menu li:hover:before {
+  left: 0;
+  right: auto;
+  width: 100%;
+}
+ul.menu li:hover:after {
+  opacity: 1;
+  padding: 0 20px;
+  transform: translate(0px, 6px);
+  transition: transform 0.2s 0.14s ease-out, opacity 0.2s 0.14s ease-out;
+}
+
+/*стилизация элементов li, при имеющемся у body класса "open"*/
+.open ul.menu li {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+/*обращение к определенному потомку тега ul, если тегу body добавлен класс "open"*/
+.open ul.menu li:nth-child(1) {
+  transition-delay: 0.75s;
+}
+.open ul.menu li:nth-child(2) {
+  transition-delay: 0.85s;
+}
+.open ul.menu li:nth-child(3) {
+  transition-delay: 0.95s;
+}
+.open ul.menu li:nth-child(4) {
+  transition-delay: 1.05s;
+}
+
+article {
+  padding: 24px;
+  max-width: 600px;
+  margin: 60px auto;
+  transition: 0.2s ease-out;
+}
+
+/*ситилизация тега article, при имеющемся классе "open" у тега body*/
+.open article {
+  transform: scale(0.92);
+  transition: transform 0.2s 0.41s ease-out;
+}
+
+
+
+/*ПРИ НАЖАТИИ НА "ЗАПУСТИТЬ (PLAY)"*/
+
+/*ДЛЯ ВВОДА ДАННЫХ*/
+/*убирает стрелки у input*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  appearance: none;
+}
+/*стилизация контейнера, в котором находятся элементы для работы с вводом и отправкой введенных данных*/
+.data_input {
+  margin: 50px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*стилизация контейнера, в котором находятся элементы для работы с вводом и отправкой введенных данных*/
+.field {
+  width: 35%;
+  height: 70px;
+  position: relative;
+}
+
+/*стилизация поля ввода*/
+.field input {
+  width: 100%;
+  border-radius: 6px;
+  height: 70px;
+  border: 0;
+  padding: 20px 0 0 16px;
+  font-size: 0;
+  background: #1566BB;
+  transition: background .3s ease;
+  color: #ffffff;
+  box-shadow: 0 10px 90px -2px rgba(0, 0, 0, 0.2);
+}
+
+/*стилизация элемента input, получившего фокус*/
+.field input:focus {
+  background: #065CB7;
+  font-size: 23px;
+}
+
+/*стилизация при выделении текста в input*/
+.field input:focus::selection {
+  background: rgba(188, 232, 255, 0.5);
+}
+
+/*стилизация для input и кнопки "ОК"*/
+.field input,
+.field #ok {
+  position: absolute;
+  height: 70px;
+}
+
+/*стилизация для кнопки "ОК"*/
+.field #ok {
+  background: rgba(0, 0, 0, 0.3);
+  right: 0;
+  border: 0;
+  width: 25%;
+  border-radius: 6px;
+  font-size: 25px;
+  cursor: pointer;
+  transition: width .3s ease, background .3s ease, opacity .3s ease;
+  opacity: 0;
+  color: #065CB7;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/*стилизация для input с классом "active"*/
+.field input.active {
+  background: #065CB7;
+  font-size: 23px;
+}
+
+/*стилизация для кнопки "ОК" с классом "active"*/
+.field #ok.active {
+  color: #ffffff;
+  background: #76cff4;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/*hover-эффект для кнопки "ОК" с классом "active"*/
+.field #ok.active:hover {
+  background: #4f8fd6;
+}
+
+/*стилизация для кнопки "ОК" с классом "full"(для отображения текста "Спасибо" после ее нажатия)*/
+.field #ok.full {
+  width: 100%;
+}
+
+.field input:focus + label {
+  font-size: 15px;
+  transform: translate(16px, 11px);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/*стилизация label'а (Введите кол-во эл-тов)*/
+.field label {
+  position: absolute;
+  color: white;
+  transform: translate(16px, 20px);
+  transition: transform .3s ease, font-size .3s ease, color .3s .1s ease;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+/*стилизация label'а с классом "active"(Введите кол-во эл-тов)*/
+.field label.active {
+  font-size: 15px;
+  transform: translate(16px, 11px);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.field input:focus + label + #ok {
+   opacity: 1;
+ }
+
+
+
+
+/*ЭЛЕМЕНТЫ, ИСПОЛЬЗУЕМЫЕ ДЛЯ ОТОБРАЖЕНИЯ СОРТИРОВКИ*/
+/*стилизация главного блока, в котором происходит отображение*/
+.block{
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/*расположение кнопок*/
+.btns{
+  display: flex;
+  justify-content: center;
+}
+
+/*стилизация для кнопки "Сгенирировать"*/
+.btns button:first-child{
+  margin-right: 30px;
+}
+
+/*стилизация кнопок для сортировки*/
+.btns button{
+  border: none;
+  background: transparent;
+  padding: 0 24px;
+  font-size: 16px;
+  line-height: 52px;
+  position: relative;
+  color: #3E4651;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.btns button:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 48px;
+  background: transparent;
+  border: 2px solid #4AB9F2;
+  z-index: -1;
+  border-radius: 5px;
+  transition: 0.3s ease-in-out;
+}
+.btns button:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #f1f1f1;
+  height: 30px;
+  width: 80%;
+  z-index: -1;
+  transition: 0.3s linear;
+}
+.btns button:hover:after {
+  opacity: 0;
+  background: #4AB9F2;
+}
+.btns button:hover {
+  color: #fff;
+}
+.btns button:hover:before {
+  width: 100%;
+  background: #4AB9F2;
+  box-shadow: 0 10px 90px -2px rgba(0, 0, 0, 0.2);
+}
+
+/*стилизация блоков, используемых для отображения ДО СОРТИРОВКИ и ПОСЛЕ*/
+.beforeSorting,.afterSorting{
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0;
+}
+
+.block h3{
+  padding: 0;
+  margin: 0;
+  margin-top: 30px;
+}
+
+/*стилизация пузыря, а также его анимация*/
+.ball{
+  padding: 0;
+  width: 100px;
+  height:100px;
+  display: inline-flex;
+  cursor: default;
+  margin: 20px 6px 0 6px;
+  background: radial-gradient(circle at bottom, #81e8f6, #76deef 10%, #055194 80%, #062745 100%);
+  border-radius: 100%;
+  text-align:center;
+  vertical-align:middle;
+  line-height: 80px;
+}
+.ball .number {
+  width: 15px;
+  height: 15px;
+  margin: 50px -15px;
+  border-radius: 50%;
+  color: #06009a;
+  position: absolute;
+  transform: translateX(68px) translateY(-60px) skewX(19deg) skewY(2deg);
+}
+.ball:before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background: radial-gradient(circle at top, white, rgba(255, 255, 255, 0) 58%);
+  filter: blur(5px);
+  z-index: 2;
+}
+
+.ball.bubble {
+  background: radial-gradient(circle at 50% 55%, rgba(240, 245, 255, 0.9), rgba(240, 245, 255, 0.9) 40%, rgba(225, 238, 255, 0.8) 60%, rgba(43, 130, 255, 0.4));
+  animation: bubble-animation 2s ease-out infinite;
+}
+.ball.bubble:before {
+  filter: blur(0);
+  height: 80%;
+  width: 40%;
+  background: radial-gradient(circle at 130% 130%, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0) 46%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.8) 58%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  transform: translateX(131%) translateY(58%) rotateZ(168deg) rotateX(10deg);
+}
+.ball.bubble:after {
+  display: block;
+  background: radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 74%, white 80%, white 84%, rgba(255, 255, 255, 0) 100%);
+}
+
+
+
+/*АНИМАЦИИ*/
+/*анимация "menu-animation",которая начинает свою работу при нажатии нажатии на .menu-toggle*/
+@keyframes menu-animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.04) translateY(300%);
+  }
+  40% {
+    transform: scale(0.04) translateY(0);
+    transition: ease-out;
+  }
+  40% {
+    transform: scale(0.04) translateY(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.02) translateY(0px);
+  }
+  61% {
+    transform: scale(0.04);
+  }
+  99.9% {
+    height: 0;
+    padding-bottom: 100%;
+    border-radius: 100%;
+  }
+  100% {
+    transform: scale(2);
+    height: 100%;
+    padding-bottom: 0;
+    border-radius: 0;
+  }
+}
+
+/*анимация для пузырьков*/
+@keyframes bubble-animation {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scaleY(0.95) scaleX(1.05);
+  }
+  48% {
+    transform: scaleY(1.1) scaleX(0.9);
+  }
+  68% {
+    transform: scaleY(0.98) scaleX(1.02);
+  }
+  80% {
+    transform: scaleY(1.02) scaleX(0.98);
+  }
+  97%, 100% {
+    transform: scale(1);
+  }
+}
+
+
+/*МЕДИА-ЗАПРОСЫ*/
+@media screen and (max-width: 1016px){
+  .field label{
+    font-size: 20px;
+  }
+}
+@media screen and (max-width: 904px){
+  .field{
+    width: 45%;
+  }
+  .field label{
+    font-size: 23px;
+  }
+}
+@media screen and (max-width: 784px){
+  .field label{
+    font-size: 20px;
+  }
+}
+@media screen and (max-width: 707px){
+  .field{
+    width: 50%;
+  }
+}
+@media screen and (max-width: 645px){
+  .field label{
+    font-size: 18px;
+  }
+
+}
+@media screen and (max-width: 627px){
+  .field input:focus + label {
+    font-size: 12px;
+  }
+  .field label.active {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 558px){
+  .field {
+    width: 55%;
+  }
+}
+@media screen and (max-width: 508px){
+  .field label{
+    font-size: 13px;
+  }
+  .field input,
+  .field #ok{
+    height: 55px;
+  }
+}
+@media screen and (max-width: 500px) {
+  h1 {
+    font-size: 40px;
+    line-height: 50px;
+  }
+}
+@media screen and (max-width: 461px){
+  .field input:focus + label {
+    font-size: 10px;
+  }
+  .field label.active {
+    font-size: 10px;
+  }
+}
+@media screen and (max-width: 429px){
+  .field label{
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 390px){
+  .field input:focus + label {
+    font-size: 9px;
+  }
+  .field label.active {
+    font-size: 9px;
+  }
+  h1{
+    font-size: 34px;
+    line-height: 40px;
+  }
+  .field #ok{
+    font-size: 23px;
+  }
+}
+@media screen and (max-width: 360px){
+  .field input:focus + label {
+    font-size: 8px;
+  }
+  .field label.active {
+    font-size: 8px;
+  }
+  .field label{
+    font-size: 10px;
+  }
+}
